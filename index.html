@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>0mik0 — omari-portfolio</title>
+<title>Omari Gobejishvili — Portfolio</title>
 <style>
 body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: sans-serif; color: white; }
 body:not(.home-background) { background-color: #FB928E; }
@@ -33,7 +33,7 @@ body.home-background {
 .bio-box {
   background-color: white; color: black; padding: 20px; max-width: 600px;
   border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
- margin: 300px auto 0 auto; user-select: text;
+  margin-top: 300px; margin-left: 730px; user-select: text;
 }
 input[type="file"] { display: none; }
 body.admin input[type="file"] { display: inline-block; }
@@ -162,57 +162,10 @@ function saveGallery(sectionId) {
   });
   localStorage.setItem(`gallery-${sectionId}`, JSON.stringify(items));
 }
-async function fetchGitHubMedia(sectionId) {
-  const repoOwner = "YOUR_USERNAME";
-  const repoName = "YOUR_REPO";
-  const branch = "main"; // or "gh-pages" or whatever you're using
-  const folderPath = `media/${sectionId}`; // Example path in your repo
-
-  const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}?ref=${branch}`;
-
-  try {
-    const response = await fetch(apiUrl);
-    if (!response.ok) throw new Error("Failed to load GitHub media");
-    const files = await response.json();
-
-    files.forEach(file => {
-      if (!file.download_url) return;
-
-      const container = document.createElement('div');
-      container.className = 'draggable';
-      container.style.left = '0px';
-      container.style.top = '0px';
-      container.style.width = '150px';
-      container.style.height = '150px';
-
-      const mediaType = file.name.match(/\.(mp4|webm|ogg)$/i) ? 'video' : 'img';
-      const media = document.createElement(mediaType);
-      media.src = file.download_url;
-      if (mediaType === 'video') media.controls = true;
-
-      const resizeHandle = document.createElement('div');
-      resizeHandle.className = 'resize-handle';
-
-      container.appendChild(media);
-      container.appendChild(resizeHandle);
-
-      const gallery = document.getElementById(`${sectionId}-gallery`);
-      gallery.appendChild(container);
-
-      makeDraggable(container, sectionId);
-      makeResizable(container, resizeHandle, sectionId);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
 function loadGallery(sectionId) {
   const gallery = document.getElementById(`${sectionId}-gallery`);
   const data = localStorage.getItem(`gallery-${sectionId}`);
-  if (!data) {
-  fetchGitHubMedia(sectionId);
-  return;
-}
+  if (!data) return;
   const items = JSON.parse(data);
   items.forEach(item => {
     const container = document.createElement('div');
