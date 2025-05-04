@@ -147,7 +147,7 @@ document.querySelectorAll('.back-btn').forEach(elem => {
 
 // Save & Load from localStorage
 function saveGallery(sectionId) {
-  const gallery = document.getElementById(${sectionId}-gallery);
+  const gallery = document.getElementById(`${sectionId}-gallery`);
   const items = Array.from(gallery.children).map(el => {
     const media = el.querySelector('img, video');
     const computed = window.getComputedStyle(el);
@@ -160,15 +160,15 @@ function saveGallery(sectionId) {
       height: el.style.height || computed.height
     };
   });
-  localStorage.setItem(gallery-${sectionId}, JSON.stringify(items));
+  localStorage.setItem(`gallery-${sectionId}`, JSON.stringify(items));
 }
 async function fetchGitHubMedia(sectionId) {
   const repoOwner = "YOUR_USERNAME";
   const repoName = "YOUR_REPO";
   const branch = "main"; // or "gh-pages" or whatever you're using
-  const folderPath = media/${sectionId}; // Example path in your repo
+  const folderPath = `media/${sectionId}`; // Example path in your repo
 
-  const apiUrl = https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}?ref=${branch};
+  const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}?ref=${branch}`;
 
   try {
     const response = await fetch(apiUrl);
@@ -196,7 +196,7 @@ async function fetchGitHubMedia(sectionId) {
       container.appendChild(media);
       container.appendChild(resizeHandle);
 
-      const gallery = document.getElementById(${sectionId}-gallery);
+      const gallery = document.getElementById(`${sectionId}-gallery`);
       gallery.appendChild(container);
 
       makeDraggable(container, sectionId);
@@ -207,8 +207,8 @@ async function fetchGitHubMedia(sectionId) {
   }
 }
 function loadGallery(sectionId) {
-  const gallery = document.getElementById(${sectionId}-gallery);
-  const data = localStorage.getItem(gallery-${sectionId});
+  const gallery = document.getElementById(`${sectionId}-gallery`);
+  const data = localStorage.getItem(`gallery-${sectionId}`);
   if (!data) {
   fetchGitHubMedia(sectionId);
   return;
@@ -250,7 +250,7 @@ function loadGallery(sectionId) {
 
 function handleUpload(event, sectionId) {
   const files = event.target.files;
-  const gallery = document.getElementById(${sectionId}-gallery);
+  const gallery = document.getElementById(`${sectionId}-gallery`);
   for (let file of files) {
     const reader = new FileReader();
     reader.onload = function(e) {
