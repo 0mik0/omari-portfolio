@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Omari Gobejishvili — Portfolio</title>
+<style>
+body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: sans-serif; color: white; }
+body:not(.home-background) { background-color: #FB928E; }
+body.home-background {
+  background: url('https://i.imgur.com/x6kwj27.jpeg') no-repeat center center fixed;
+  background-size: cover;
+}
+#sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 200px; background-color: yellow; padding-top: 30px; box-sizing: border-box; overflow-y: auto;
+}
+#sidebar a {
+  display: block; padding: 12px; color: black; text-decoration: none;
+  font-weight: bold; font-size: 1.5em; box-sizing: border-box; cursor: pointer;
+}
+#sidebar a:hover { background-color: rgba(0,0,0,0.1); }
+#content { margin-left: 200px; padding: 20px; box-sizing: border-box; }
+.gallery { position: relative; height: 2000px; }
+.gallery img, .gallery video {
+  width: 150px; margin: 10px; border: 10px solid white;
+}
+.back-btn {
+  display: inline-block; margin: 20px 0; padding: 8px 16px;
+  background: rgba(255,255,255,0.2); color: white; text-decoration: none;
+  border-radius: 5px; user-select: none; cursor: pointer;
+}
+.back-btn:hover { background: rgba(255,255,255,0.4); }
+.bio-box {
+  background-color: white; color: black; padding: 20px; max-width: 600px;
+  border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+ margin: 300px auto 0 auto; user-select: text;
+}
+input[type="file"] { display: none; }
+body.admin input[type="file"] { display: inline-block; }
+
+.draggable {
+  position: absolute; cursor: move; overflow: hidden;
+  box-sizing: border-box; touch-action: none; user-select: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 10px solid white;
+}
+.draggable img, .draggable video {
+  display: block; width: 100%; height: 100%;
+  user-select: none; pointer-events: none; margin: 0; border: none;
+  object-fit: contain;
+}
+.resize-handle {
+  width: 16px; height: 16px; background-color: red; border: 2px solid white;
+  position: absolute; right: 0; bottom: 0; cursor: se-resize; z-index: 10; user-select: none;
+}
+.delete-btn {
+  position: absolute; top: -8px; right: -8px; width: 20px; height: 20px;
+  background: red; color: white; border: 2px solid white; border-radius: 50%;
+  font-weight: bold; text-align: center; line-height: 16px;
+  cursor: pointer; user-select: none; z-index: 20; display: none;
+}
+body:not(.admin) .draggable { border: none !important; }
+body:not(.admin) .resize-handle, body:not(.admin) .delete-btn { display: none !important; }
+body.admin .delete-btn { display: block; }
+</style>
+</head>
+
+<body class="home-background">
+<div id="sidebar">
+  <a href="#" data-section="home">Home</a>
+  <a href="#" data-section="projects">Projects</a>
+  <a href="#" data-section="animations">Animations</a>
+  <a href="#" data-section="storytelling">Storytelling</a>
+  <a href="#" data-section="personal">Personal</a>
+  <a href="#" data-section="characters">Characters</a>
+</div>
+
+<div id="content">
+  <div id="home">
+    <h1>Welcome to My Portfolio</h1>
+    <p>I'm <strong>Omari Gobejishvili</strong>, I hope you enjoy the journey through my work.</p>
+    <div class="bio-box">
+      <h2>2D Generalist</h2>
+      <p>Trained at the Tbilisi State Academy of Arts, I have over 7 years of experience working as a 2D artist in game development. My work spans storytelling, frame-by-frame animation, 3D modeling, illustration, character design, and game prop creation.</p>
+    </div>
+  </div>
+
+  <!-- Sections -->
+  <div id="projects" style="display:none;">
+    <h2>Projects</h2>
+    <input type="file" multiple onchange="handleUpload(event, 'projects')" accept="image/*,video/*" />
+    <div class="gallery" id="projects-gallery"></div>
+    <div class="back-btn" data-section="home">← Back</div>
+  </div>
+  <div id="animations" style="display:none;">
+    <h2>Animations</h2>
+    <input type="file" multiple onchange="handleUpload(event, 'animations')" accept="image/*,video/*" />
+    <div class="gallery" id="animations-gallery"></div>
+    <div class="back-btn" data-section="home">← Back</div>
+  </div>
+  <div id="storytelling" style="display:none;">
+    <h2>Storytelling</h2>
+    <input type="file" multiple onchange="handleUpload(event, 'storytelling')" accept="image/*,video/*" />
+    <div class="gallery" id="storytelling-gallery"></div>
+    <div class="back-btn" data-section="home">← Back</div>
+  </div>
+  <div id="personal" style="display:none;">
+    <h2>Personal Works</h2>
+    <input type="file" multiple onchange="handleUpload(event, 'personal')" accept="image/*,video/*" />
+    <div class="gallery" id="personal-gallery"></div>
+    <div class="back-btn" data-section="home">← Back</div>
+  </div>
+  <div id="characters" style="display:none;">
+    <h2>Character Designs</h2>
+    <input type="file" multiple onchange="handleUpload(event, 'characters')" accept="image/*,video/*" />
+    <div class="gallery" id="characters-gallery"></div>
+    <div class="back-btn" data-section="home">← Back</div>
+  </div>
+</div>
+
+<script>
+function showSection(section) {
+  const sections = ['home', 'projects', 'animations', 'storytelling', 'personal', 'characters'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === section) ? 'block' : 'none';
+  });
+  if (section === 'home') {
+    document.body.classList.add('home-background');
+  } else {
+    document.body.classList.remove('home-background');
+  }
+}
+document.getElementById('sidebar').addEventListener('click', (e) => {
+  const section = e.target.getAttribute('data-section');
+  if (section) {
+    e.preventDefault();
+    showSection(section);
+  }
+});
+document.querySelectorAll('.back-btn').forEach(elem => {
+  elem.addEventListener('click', e => {
+    const section = e.target.getAttribute('data-section') || 'home';
+    showSection(section);
+  });
+});
+
+// Save & Load from localStorage
+function saveGallery(sectionId) {
+  const gallery = document.getElementById(`${sectionId}-gallery`);
+  const items = Array.from(gallery.children).map(el => {
+    const media = el.querySelector('img, video');
+    const computed = window.getComputedStyle(el);
+    return {
+      type: media.tagName.toLowerCase(),
+      src: media.src,
+      left: el.style.left || computed.left,
+      top: el.style.top || computed.top,
+      width: el.style.width || computed.width,
+      height: el.style.height || computed.height
+    };
+  });
+  localStorage.setItem(`gallery-${sectionId}`, JSON.stringify(items));
+}
+function loadGallery(sectionId) {
+  const gallery = document.getElementById(`${sectionId}-gallery`);
+  const data = localStorage.getItem(`gallery-${sectionId}`);
+  if (!data) return;
+  const items = JSON.parse(data);
+  items.forEach(item => {
+    const container = document.createElement('div');
+    container.className = 'draggable';
+    container.style.left = item.left;
+    container.style.top = item.top;
+    container.style.width = item.width;
+    container.style.height = item.height;
+
+    const deleteBtn = document.createElement('div');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = '×';
+    deleteBtn.title = 'Delete';
+    deleteBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      container.remove();
+      saveGallery(sectionId);
+    });
+    container.appendChild(deleteBtn);
+
+    const media = document.createElement(item.type);
+    media.src = item.src;
+    if (item.type === 'video') media.controls = true;
+    container.appendChild(media);
+
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    container.appendChild(resizeHandle);
+
+    gallery.appendChild(container);
+    makeDraggable(container, sectionId);
+    makeResizable(container, resizeHandle, sectionId);
+  });
+}
+
+function handleUpload(event, sectionId) {
+  const files = event.target.files;
+  const gallery = document.getElementById(`${sectionId}-gallery`);
+  for (let file of files) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const container = document.createElement('div');
+      container.className = 'draggable';
+      container.style.left = '0px';
+      container.style.top = '0px';
+      container.style.width = '150px';
+      container.style.height = '150px';
+
+      const deleteBtn = document.createElement('div');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.textContent = '×';
+      deleteBtn.title = 'Delete';
+      deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        container.remove();
+        saveGallery(sectionId);
+      });
+      container.appendChild(deleteBtn);
+
+      const isVideo = file.type.startsWith('video');
+      const media = document.createElement(isVideo ? 'video' : 'img');
+      media.src = e.target.result;
+      if (isVideo) media.controls = true;
+      container.appendChild(media);
+
+      const resizeHandle = document.createElement('div');
+      resizeHandle.className = 'resize-handle';
+      container.appendChild(resizeHandle);
+
+      gallery.appendChild(container);
+      makeDraggable(container, sectionId);
+      makeResizable(container, resizeHandle, sectionId);
+      saveGallery(sectionId);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function makeDraggable(el, sectionId) {
+  el.addEventListener('mousedown', function(e) {
+    if (!document.body.classList.contains('admin')) return;
+    if (e.target.classList.contains('resize-handle')) return;
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.parentElement.getBoundingClientRect();
+    let shiftX = e.clientX - rect.left;
+    let shiftY = e.clientY - rect.top;
+    function moveAt(pageX, pageY) {
+      let newLeft = pageX - shiftX - parentRect.left;
+      let newTop = pageY - shiftY - parentRect.top;
+      newLeft = Math.max(0, Math.min(newLeft, parentRect.width - el.offsetWidth));
+      newTop = Math.max(0, Math.min(newTop, parentRect.height - el.offsetHeight));
+      el.style.left = newLeft + 'px';
+      el.style.top = newTop + 'px';
+    }
+    function onMouseMove(e) { moveAt(e.pageX, e.pageY); }
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', function mouseUpHandler() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', mouseUpHandler);
+      saveGallery(sectionId);
+    });
+  });
+  el.ondragstart = () => false;
+}
+
+function makeResizable(el, handle, sectionId) {
+  handle.addEventListener('mousedown', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    const startX = e.clientX, startY = e.clientY;
+    const startWidth = el.offsetWidth, startHeight = el.offsetHeight;
+    const aspectRatio = startWidth / startHeight;
+    function onMouseMove(e) {
+      let dx = e.clientX - startX;
+      let newWidth = startWidth + dx;
+      let newHeight = newWidth / aspectRatio;
+      newWidth = Math.max(newWidth, 50);
+      newHeight = Math.max(newHeight, 50);
+      
+      el.style.width = newWidth + 'px';
+      el.style.height = newHeight + 'px';
+      
+      const media = el.querySelector('img, video');
+      media.style.width = '100%';
+      media.style.height = '100%';
+    }
+    function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      saveGallery(sectionId);
+    }
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+// Toggle admin mode (Ctrl + Shift + A)
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+    document.body.classList.toggle('admin');
+  }
+});
+
+// Load galleries on startup
+['projects', 'animations', 'storytelling', 'personal', 'characters'].forEach(loadGallery);
+</script>
+
+</body>
+</html>
